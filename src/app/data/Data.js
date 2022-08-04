@@ -1,0 +1,118 @@
+import axios from 'axios';
+
+//const baseUri = 'https://ueapi.haeahn.com/api/BIMPerform';
+const baseUri = 'http://localhost:5172/api/Transaction'
+
+const GetEmployeeProjects = (employeeId, startDate, endDate) => {
+    try{
+        return axios.get(baseUri + '/getEmployeeProjects', {
+            params: {employeeId:employeeId, startDate:startDate, endDate:endDate}
+        });
+    }
+    catch(error){
+        console.error(error);
+    }   
+}
+
+const GetTeamProjects = (employeeId, startDate, endDate) => {
+    try{
+        return axios.get(baseUri + '/GetTeamProjects', {
+            params: {employeeId:employeeId, startDate:startDate, endDate:endDate}
+        });
+    }
+    catch(error){
+        console.error(error);
+    }   
+}
+
+const GetElements = (employeeId, projectCode, startDate, endDate) => {
+    try{
+        return axios.get(baseUri + '/elements', {
+            params: {employeeId:employeeId, projectCode:projectCode, startDate:startDate, endDate:endDate}
+        });
+    }
+    catch(error){
+        console.error(error);
+    }   
+}
+
+const GetModelByCount = (employeeId, projectCode, startDate, endDate) => {
+    try{
+        return axios.get(baseUri + '/models', {
+            params: {employeeId:employeeId, projectCode:projectCode, startDate:startDate, endDate:endDate}
+        });
+    }
+    catch(error){
+        console.error(error);
+    }  
+}
+
+const GetAnnotationByCount = (employeeId, projectCode, startDate, endDate) => {
+    try{
+        return axios.get(baseUri + '/annotations', {
+            params: {employeeId:employeeId, projectCode:projectCode, startDate:startDate, endDate:endDate}
+        });
+    }
+    catch(error){
+        console.error(error);
+    }  
+}
+
+const GetViewCountByType = (employeeId, projectCode, startDate, endDate) => {
+    try{
+        return axios.get(baseUri + '/viewCountByType', {
+            params: {employeeId:employeeId, projectCode:projectCode, startDate:startDate, endDate:endDate}
+        });
+    }
+    catch(error){
+        console.error(error);
+    }  
+}
+
+const GetTransactionStatsByDate = (employeeId, projectCode, startDate, endDate) => {
+    try{
+        return axios.get(baseUri + '/transactionStatsByDate', { 
+        params: {employeeId: employeeId, projectCode: projectCode, startDate:startDate, endDate:endDate}
+        });
+    }
+    catch(error){
+        console.error(error);
+    }
+}
+
+const GetTotalTransactionCount = (employeeId, projectCode, startDate, endDate) => {
+    try{
+        return axios.get(baseUri + '/totalTransactionCount', { 
+            params: {employeeId: employeeId, projectCode: projectCode, startDate:startDate, endDate:endDate}
+        });
+    }
+    catch(error){
+        console.error(error);
+    }
+}
+
+const GetParticipantsCountByDate = (projectCode, startDate, endDate) => { 
+    try{
+        return axios.get(baseUri + '/participantCountByDate', { 
+        params: {employeeId: null, projectCode: projectCode, startDate:startDate, endDate:endDate}
+        });
+    }
+    catch(error){
+        console.error(error);
+    }
+}
+
+const LoginUser = (userId, pw, authKey) => {
+    try{
+      return axios.post('https://api.haeahn.com/api/loginsso', new URLSearchParams({userId, pw, authKey}), {
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded'
+        }
+      })
+    }
+    catch(error){
+      console.error(error);
+    }
+  }
+
+export default {GetEmployeeProjects, GetTeamProjects, GetModelByCount, GetAnnotationByCount, GetViewCountByType, GetTransactionStatsByDate, GetTotalTransactionCount, GetParticipantsCountByDate, LoginUser}

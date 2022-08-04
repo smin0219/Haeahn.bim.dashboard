@@ -1,0 +1,32 @@
+
+ul {
+    width: 50px;
+    margin: 0;
+    height: 750px;
+    background-color: #000080;
+    border-top-left-radius: 16px;
+    border-bottom-left-radius: 16px;
+}
+
+li {
+    position: relative;
+    width: 30px;
+    left: -10px;
+    display: block;
+    background-color: white;
+    text-align: center;
+}
+
+.wrapper {
+    width: 80px;
+    height: 100%;
+    background-color: #000080;
+    text-align: center;
+}
+
+.wrapper img {
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    margin-top:40px;  
+}
