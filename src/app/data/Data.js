@@ -91,16 +91,16 @@ const GetTotalTransactionCount = (employeeId, projectCode, startDate, endDate) =
     }
 }
 
-const GetParticipantsCountByDate = (projectCode, startDate, endDate) => { 
-    try{
-        return axios.get(baseUri + '/participantCountByDate', { 
-        params: {employeeId: null, projectCode: projectCode, startDate:startDate, endDate:endDate}
-        });
-    }
-    catch(error){
-        console.error(error);
-    }
-}
+// const GetParticipantsCountByDate = (projectCode, startDate, endDate) => { 
+//     try{
+//         return axios.get(baseUri + '/participantCountByDate', { 
+//         params: {employeeId: null, projectCode: projectCode, startDate:startDate, endDate:endDate}
+//         });
+//     }
+//     catch(error){
+//         console.error(error);
+//     }
+// }
 
 const LoginUser = (userId, pw, authKey) => {
     try{
@@ -115,4 +115,4 @@ const LoginUser = (userId, pw, authKey) => {
     }
   }
 
-export default {GetEmployeeProjects, GetTeamProjects, GetModelByCount, GetAnnotationByCount, GetViewCountByType, GetTransactionStatsByDate, GetTotalTransactionCount, GetParticipantsCountByDate, LoginUser}
+export default {GetEmployeeProjects, GetTeamProjects, GetModelByCount, GetAnnotationByCount, GetViewCountByType, GetTransactionStatsByDate, GetTotalTransactionCount, LoginUser}
