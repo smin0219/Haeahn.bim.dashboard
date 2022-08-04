@@ -38,7 +38,7 @@ const GetElements = (employeeId, projectCode, startDate, endDate) => {
 
 const GetModelByCount = (employeeId, projectCode, startDate, endDate) => {
     try{
-        return axios.get(baseUri + '/models', {
+        return axios.get(baseUri + '/getModelCountByName', {
             params: {employeeId:employeeId, projectCode:projectCode, startDate:startDate, endDate:endDate}
         });
     }
@@ -49,7 +49,7 @@ const GetModelByCount = (employeeId, projectCode, startDate, endDate) => {
 
 const GetAnnotationByCount = (employeeId, projectCode, startDate, endDate) => {
     try{
-        return axios.get(baseUri + '/annotations', {
+        return axios.get(baseUri + '/getAnnotationCountByName', {
             params: {employeeId:employeeId, projectCode:projectCode, startDate:startDate, endDate:endDate}
         });
     }
