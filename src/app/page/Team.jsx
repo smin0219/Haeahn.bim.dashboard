@@ -67,7 +67,7 @@ function Team(props) {
                         <MuiDatePicker date={startDate} setDate={setStartDate} setIsDateUpdated={setIsDateUpdated} />
                         <div style={{ height: '10px', paddingTop: '42px', paddingLeft: '20px', paddingRight: '20px' }}>-</div>
                         <MuiDatePicker date={endDate} setDate={setEndDate} setIsDateUpdated={setIsDateUpdated} />
-                        <div className={styles.block_column_wrapper} style={{ width: '240px', marginLeft: '10px' }}>
+                        <div className={styles.block_column_wrapper} style={{ width: '220px', marginLeft: '10px' }}>
                             <img className={styles.profile_img} src={profileImg} alt="profile" />
                             <div className={styles.profile_label}>환영합니다, {employeeName} 님</div>
                         </div>
@@ -75,55 +75,56 @@ function Team(props) {
                     <div className={styles.column_row_wrapper} style={{ marginLeft: '5px' }}>
                         <div className={styles.block_column_wrapper}>
                             <div className={styles.block_row_wrapper}>
-                                <div className={styles.content_wrapper} style={{ textAlign: 'left', height: '120px' }}>
-                                    <h2 className={styles.content_title} style={{ paddingLeft: '15px' }}>프로젝트</h2>
-                                    <div className={styles.block_row_wrapper} style={{ height: "15px" }}>
-                                        <div className={styles.content_sub_title} style={{ width: "60px", padding: 0, paddingLeft: "15px" }}>
-                                            Project Code
+                                <div lassName={styles.block_column_wrapper}>
+                                    <div className={styles.content_wrapper} style={{ textAlign: 'left', height: '120px' }}>
+                                        <h2 className={styles.content_title} style={{ paddingLeft: '15px' }}>프로젝트</h2>
+                                        <div className={styles.block_row_wrapper} style={{ height: "15px" }}>
+                                            <div className={styles.content_sub_title} style={{ width: "60px", padding: 0, paddingLeft: "15px" }}>
+                                                Project Code
+                                            </div>
+                                            <div className={styles.content_sub_title} style={{ width: "400px" }}>
+                                                Project Name
+                                            </div>
+                                            <div className={styles.content_sub_title} style={{ width: "90px", paddingLeft: 5 }}>
+                                                Last Modified
+                                            </div>
                                         </div>
-                                        <div className={styles.content_sub_title} style={{ width: "400px" }}>
-                                            Project Name
-                                        </div>
-                                        <div className={styles.content_sub_title} style={{ width: "90px", paddingLeft: 5 }}>
-                                            Start Date
-                                        </div>
-                                        <div className={styles.content_sub_title} style={{ width: "90px", paddingLeft: 5 }}>
-                                            End Date
+                                        <div style={{ paddingLeft: '2px', paddingRight: '2px' }}>
+                                            <ProjectComboBox />
                                         </div>
                                     </div>
-                                    <div style={{ paddingLeft: '2px' }}>
-                                        <ProjectComboBox />
+                                    <div className={styles.block_row_wrapper}>
+                                        <div className={styles.content_wrapper} style={{ width: '200px', textAlign: 'left', height: '315px' }}>
+                                            <h2 className={styles.content_title} style={{ paddingLeft: '15px' }}>Team Performance</h2>
+                                        </div>
+                                        <div className={styles.content_wrapper} style={{ width: '400px', textAlign: 'left', height: '315px' }}>
+                                            <h2 className={styles.content_title} style={{ paddingLeft: '15px' }}>BIM 작업량 추이</h2>
+                                        </div>
                                     </div>
                                 </div>
-                                <div className={styles.content_wrapper} style={{ width: '350px', textAlign: 'left', height: '315px' }}>
-                                    <h2 className={styles.content_title} style={{ paddingLeft: '15px' }}>BIM 작업량 추이</h2>
-                                    <div className="transaction-xy-chart" style={{ top: "-10px", height: "290px" }}></div>
-                                </div>
-                            </div>
-                            <div className={styles.block_row_wrapper}>
-                                <div className={styles.content_wrapper} style={{ textAlign: 'left', height: '315px' }}>
+                                <div className={styles.content_wrapper} style={{ textAlign: 'left', height: '441px' }}>
                                     <h2 className={styles.content_title} style={{ paddingLeft: '15px' }}>팀원</h2>
-
                                     <div className={styles.block_row_wrapper} style={{ height: "15px" }}>
-                                        <div className={styles.content_sub_title} style={{ width: "40px" }}>
+                                        <div className={styles.content_sub_title} style={{ width: "50px" }}>
+                                        </div>
+                                        <div className={styles.content_sub_title} style={{ width: "60px" }}>
                                             Name
                                         </div>
-                                        <div className={styles.content_sub_title} style={{ width: "40px" }}>
-                                            Position
-                                        </div>
-                                        <div className={styles.content_sub_title} style={{ width: "395px" }}>
-                                            Recent Project
+                                        <div className={styles.content_sub_title} style={{ width: "60px" }}>
+                                            position
                                         </div>
                                         <div className={styles.content_sub_title} style={{ width: "70px" }}>
                                             Main Skill
                                         </div>
-                                        <div className={styles.content_sub_title} style={{ width: "70px" }}>
+                                        <div className={styles.content_sub_title} style={{ width: "132px" }}>
                                             Elements
                                         </div>
                                     </div>
                                 </div>
                             </div>
+                            <div className={styles.content_wrapper} style={{ textAlign: 'left', height: '240px' }}>
 
+                            </div>
                         </div>
                     </div>
                 </div>
