@@ -1,7 +1,7 @@
 import axios from 'axios';
 
-//const baseUri = 'https://ueapi.haeahn.com/api/BIMPerform';
-const baseUri = 'http://localhost:5172/api/Transaction'
+const baseUri = 'https://ueapi.haeahn.com/api/BIMPerform';
+//const baseUri = 'http://localhost:5172/api/Transaction'
 
 const GetEmployeeProjects = (employeeId, startDate, endDate) => {
     try{

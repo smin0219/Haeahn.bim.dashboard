@@ -130,11 +130,10 @@ export default function Employee (props) {
                 var projects = response.data;
                 var defaultProject = projects[0];
 
-                Data.GetTotalTransactionCount(employeeId, defaultProject.project_code, startDate, endDate).then(response => {
-                    setTotalTransactionCount(response.data[0].total_transaction_count);
-                });
-
                 if(projects.length > 0){
+                    Data.GetTotalTransactionCount(employeeId, defaultProject.project_code, startDate, endDate).then(response => {
+                        setTotalTransactionCount(response.data[0].total_transaction_count);
+                    });
                     setProjects(projects);
                     setSelectedProject(defaultProject);
                     UpdateCharts(defaultProject.project_code);
