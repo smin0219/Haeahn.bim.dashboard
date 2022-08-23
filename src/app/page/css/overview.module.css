@@ -108,14 +108,16 @@
     height: 20px;
 }
 
-.project_content_wrapper:hover{
+.list_wrapper:hover{
     background-color: #F1F1F1;
 }
 
-.project_content{
+.list_content{
     font-size: 13px;
     color: black;
     font-family: Pretendard, -apple-system, BlinkMacSystemFont, system-ui, Roboto, 'Helvetica Neue', 'Segoe UI', 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', sans-serif;
     text-align: center;
     padding: 0px 10px 0px 7px;
+    text-overflow:ellipsis;
+    overflow:hidden;
 }

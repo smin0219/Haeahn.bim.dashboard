@@ -19,11 +19,12 @@ function MuiDatePicker(props){
                 value={props.date}
                 onChange={(newValue) => {
                     props.setDate(Moment(newValue).format('YYYY-MM-DD'));
+                    props.setIsUpdated(true);
                     props.setIsDateUpdated(true);
                 }}
                 renderInput={({ inputRef, inputProps, InputProps }) => (
                     <Box sx={{ display: 'flex', alignItems: 'center', height: '30px', paddingTop: '40px'}}>
-                        <input ref={inputRef} {...inputProps} />
+                        <input style={{width:"80px"}} ref={inputRef} {...inputProps} />
                         {InputProps?.endAdornment}
                     </Box>
                 )}

@@ -1,7 +1,18 @@
 import axios from 'axios';
 
-const baseUri = 'https://ueapi.haeahn.com/api/BIMPerform';
-//const baseUri = 'http://localhost:5172/api/Transaction'
+//const baseUri = 'https://ueapi.haeahn.com/api/BIMPerform';
+const baseUri = 'http://localhost:5172/api/Transaction'
+
+const GetAuthorityCode = (employeeId) => {
+    try{
+        return axios.get(baseUri + '/getAuthorityCode', {
+            params: {employeeId:employeeId}
+        });
+    }
+    catch(error){
+        console.error(error);
+    }   
+}
 
 const GetEmployeeProjects = (employeeId, startDate, endDate) => {
     try{
@@ -14,10 +25,21 @@ const GetEmployeeProjects = (employeeId, startDate, endDate) => {
     }   
 }
 
-const GetTeamProjects = (employeeId, startDate, endDate) => {
-    try{
+const GetTeamProjects = (employeeId) => {
+    try{ 
         return axios.get(baseUri + '/GetTeamProjects', {
-            params: {employeeId:employeeId, startDate:startDate, endDate:endDate}
+            params: {employeeId:employeeId}
+        });
+    }
+    catch(error){
+        console.error(error);
+    }   
+}
+
+const GetTeamMembers = (projectCode) => {
+    try{ 
+        return axios.get(baseUri + '/GetTeamMembers', {
+            params: {projectCode:projectCode}
         });
     }
     catch(error){
@@ -115,4 +137,4 @@ const LoginUser = (userId, pw, authKey) => {
     }
   }
 
-export default {GetEmployeeProjects, GetTeamProjects, GetModelByCount, GetAnnotationByCount, GetViewCountByType, GetTransactionStatsByDate, GetTotalTransactionCount, LoginUser}
+export default {GetEmployeeProjects,  GetTeamProjects, GetTeamMembers, GetModelByCount, GetAnnotationByCount, GetViewCountByType, GetTransactionStatsByDate, GetTotalTransactionCount, GetAuthorityCode, LoginUser}

@@ -29,7 +29,9 @@ function Login(){
             else{
                 setUser(userObj);
                 setAlertMsg('');
-                navigate('/overview', { state: {userObj: userObj} });
+                Data.GetAuthorityCode(userObj.resultMessage).then((response) => {
+                    navigate('/overview', { state: {userObj: userObj, userLevel: response.data} });
+                });
             }
         })
     }

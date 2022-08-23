@@ -24,6 +24,7 @@ export default function Employee (props) {
     
     const [startDate, setStartDate] = useState(Moment().subtract(1, 'month').startOf('day').format('YYYY-MM-DD'));
     const [endDate, setEndDate] = useState(Moment().subtract(1, 'day').startOf('day').format('YYYY-MM-DD'));
+    const [isUpdated, setIsUpdated] = useState(true);
     const [isDateUpdated, setIsDateUpdated] = useState(true);
 
     const user = props.user;
@@ -121,37 +122,42 @@ export default function Employee (props) {
     }
 
     function OnProjectClick(event, props){
+        setIsUpdated(true);
         setSelectedProject(props);
     }
 
     useEffect(() => {
-        if(isDateUpdated){
-            Data.GetEmployeeProjects(employeeId, startDate, endDate).then(response => {
-                var projects = response.data;
-                var defaultProject = projects[0];
+        if(isUpdated){
+            if(isDateUpdated){
+                Data.GetEmployeeProjects(employeeId, startDate, endDate).then(response => {
+                    var projects = response.data;
+                    var defaultProject = projects[0];
 
-                if(projects.length > 0){
-                    Data.GetTotalTransactionCount(employeeId, defaultProject.project_code, startDate, endDate).then(response => {
-                        setTotalTransactionCount(response.data[0].total_transaction_count);
-                    });
-                    setProjects(projects);
-                    setSelectedProject(defaultProject);
-                    UpdateCharts(defaultProject.project_code);
-                }
-                else{
-                    setProjects({});
-                    setSelectedProject('');
-                    setEmployeeElementsCount(0);
-                    setEmployeeElementsCount(0);
-                }
-                setIsDateUpdated(false);           
-            });
-        }
-        else{
-            Data.GetTotalTransactionCount(employeeId, selectedProject.project_code, startDate, endDate).then(response => {
-                setTotalTransactionCount(response.data[0].total_transaction_count);
-            });
-            UpdateCharts(selectedProject.project_code);
+                    if(projects.length > 0){
+                        Data.GetTotalTransactionCount(employeeId, defaultProject.project_code, startDate, endDate).then(response => {
+                            setTotalTransactionCount(response.data[0].total_transaction_count);
+                        });
+                        setProjects(projects);
+                        setSelectedProject(defaultProject);
+                        UpdateCharts(defaultProject.project_code);
+                    }
+                    else{
+                        setProjects({});
+                        setSelectedProject('');
+                        setEmployeeElementsCount(0);
+                        setEmployeeElementsCount(0);
+                    }
+                    setIsUpdated(false);
+                    setIsDateUpdated(false);           
+                });
+            }
+            else{
+                Data.GetTotalTransactionCount(employeeId, selectedProject.project_code, startDate, endDate).then(response => {
+                    setTotalTransactionCount(response.data[0].total_transaction_count);
+                });
+                UpdateCharts(selectedProject.project_code);
+                isUpdated(false);
+            }
         }
     }, [selectedProject, startDate, endDate]);
 
@@ -162,17 +168,17 @@ export default function Employee (props) {
                 <div className={styles.block_column_wrapper}  style={{backgroundColor: "white"}}>
                     {/* 헤더 */}
                     <div className={styles.block_row_wrapper} style={{height: '100px'}}>
-                        <div className={styles.title_label}>Performance Overview</div>
+                        <div className={styles.title_label}  style={{ width: '350px' }}>Personal Performance Overview</div>
                         <Tooltip title="전일 12시 10분 이전 데이터만 표시 됩니다.">
                             <img className={styles.info_img} src={infoImg} alt="info"/>
                         </Tooltip>
-                        <MuiDatePicker date={startDate} setDate={setStartDate} setIsDateUpdated={setIsDateUpdated}/>
-                        <div style={{height: '10px', paddingTop: '42px', paddingLeft: '20px', paddingRight: '20px'}}>-</div>
-                        <MuiDatePicker date={endDate} setDate={setEndDate} setIsDateUpdated={setIsDateUpdated}/>
-                        <div className={styles.block_column_wrapper} style={{width: '240px', paddingLeft: '70px'}}>
+                        <MuiDatePicker date={startDate} setDate={setStartDate}  style={{width: '100px'}} setIsUpdated={setIsUpdated} setIsDateUpdated={setIsDateUpdated}/>
+                        <div style={{height: '10px', paddingTop: '42px', paddingLeft: '20px', paddingRight: '20px'}}>~</div>
+                        <MuiDatePicker date={endDate} setDate={setEndDate} setIsUpdated={setIsUpdated} setIsDateUpdated={setIsDateUpdated}/>
+                        <div className={styles.block_column_wrapper} style={{width: '240px', paddingLeft: '80px'}}>
                             <img className={styles.profile_img} src={profileImg} alt="profile"/>
                             <div className={styles.profile_label}>환영합니다, {employeeName} 님</div>
-                        </div>
+                        </div> 
                     </div>
 
                     {/* 헤더 */}
@@ -227,11 +233,11 @@ export default function Employee (props) {
                                     {projects.length != undefined ? projects.map((project, i) => {
                                             return (
                                                 <Tooltip key={i} title={project.project_name}>
-                                                    <div className={styles.project_content_wrapper} style={{borderRadius:'10px', borderWidth:'1px', border: selectedProject.project_code == project.project_code ? '1px solid #1974d2' : '1px solid #F1F1F1'}} onClick={(e) => OnProjectClick(e, project)}>
+                                                    <div className={styles.list_wrapper} style={{borderRadius:'10px', borderWidth:'1px', border: selectedProject.project_code == project.project_code ? '1px solid #1974d2' : '1px solid #F1F1F1'}} onClick={(e) => OnProjectClick(e, project)}>
                                                         <div className={styles.block_row_wrapper} style={{width: '650px'}}>
-                                                            <div className={styles.project_content} style={{lineHeight: "37px", width: "80px"}}>{project.project_code}</div>
-                                                            <div className={styles.project_content}  style={{lineHeight: "37px", width: "400px" }}>{project.project_name}</div>
-                                                            <div className={styles.project_content}  style={{lineHeight: "37px", width: "120px"}}>{Moment(project.occurred_on).format('YYYY-MM-DD')}</div>
+                                                            <div className={styles.list_content} style={{lineHeight: "37px", width: "80px"}}>{project.project_code}</div>
+                                                            <div className={styles.list_content}  style={{lineHeight: "37px", width: "400px"}}>{project.project_name}</div>
+                                                            <div className={styles.list_content}  style={{lineHeight: "37px", width: "120px"}}>{Moment(project.occurred_on).format('YYYY-MM-DD')}</div>
                                                         </div>
                                                     </div>
                                                 </Tooltip>
