@@ -36,10 +36,32 @@ const GetTeamProjects = (employeeId) => {
     }   
 }
 
+const GetDepartmentProjects = (departmentCode) => {
+    try{ 
+        return axios.get(baseUri + '/GetDepartmentProjects', {
+            params: {departmentCode:departmentCode}
+        });
+    }
+    catch(error){
+        console.error(error);
+    }   
+}
+
 const GetTeamMembers = (projectCode) => {
     try{ 
         return axios.get(baseUri + '/GetTeamMembers', {
             params: {projectCode:projectCode}
+        });
+    }
+    catch(error){
+        console.error(error);
+    }   
+}
+
+const GetDepartmentMembers = (departmentCode) => {
+    try{ 
+        return axios.get(baseUri + '/GetDepartmentMembers', {
+            params: {departmentCode:departmentCode}
         });
     }
     catch(error){
@@ -137,4 +159,4 @@ const LoginUser = (userId, pw, authKey) => {
     }
   }
 
-export default {GetEmployeeProjects,  GetTeamProjects, GetTeamMembers, GetModelByCount, GetAnnotationByCount, GetViewCountByType, GetTransactionStatsByDate, GetTotalTransactionCount, GetAuthorityCode, LoginUser}
+export default {GetEmployeeProjects, GetTeamProjects, GetDepartmentProjects, GetTeamMembers, GetDepartmentMembers, GetModelByCount, GetAnnotationByCount, GetViewCountByType, GetTransactionStatsByDate, GetTotalTransactionCount, GetAuthorityCode, LoginUser}

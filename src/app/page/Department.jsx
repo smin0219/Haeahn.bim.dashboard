@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, { useEffect, useState } from 'react';
 
 import styles from './css/overview.module.css';
 import pageStyles from './css/page.module.css';
@@ -9,18 +9,30 @@ import ProjectSearchBar from '../common/ProjectSearchBar';
 import Tooltip from '@mui/material/Tooltip';
 import Moment from 'moment';
 import Data from '../data/Data';
+import { MuiThemeProvider } from '@material-ui/core';
+import moment from 'moment';
 
-function Department (props) {
+function Department(props) {
 
-    const [projects, setProjects] = useState({});
+    const [projects, setProjects] = useState(true);
     const [selectedProject, setSelectedProject] = useState('');
+    const [departmentMembers, setDepartmentMembers] = useState(true);
 
-    const GetProjects = (employeeId, startDate, endDate) => {
-        return Data.GetProjects(employeeId, startDate, endDate);
-    }
     const OnProjectClick = (event, props) => {
         setSelectedProject(props);
     }
+    const departmentCode = 'D0510'; //추후 로그인 정보와 연동
+    //const departmentCode = 'D3500';
+
+    useEffect(() => {
+        Data.GetDepartmentMembers(departmentCode).then(response => {
+            setDepartmentMembers(response.data);
+        })
+        Data.GetDepartmentProjects(departmentCode).then(response => {
+            setProjects(response.data);
+
+        })
+    }, []);
 
     const user = props.user;
     const profileImg = "https://hub.haeahn.com/Storage/GW/ImageStorage/Employee/" + "jaehkim" + ".jpg";
@@ -40,76 +52,92 @@ function Department (props) {
                     <div className={styles.column_row_wrapper} style={{ marginLeft: '5px' }}>
                         <div className={styles.block_column_wrapper}>
                             <div className={styles.block_row_wrapper}>
-                                <div className={styles.content_wrapper} style={{textAlign: 'left', height: '315px'}}>
-                                    <h2 className={styles.content_title} style={{paddingLeft: '15px'}}>부문 임직원</h2>
-                                    <EmployeeSearchBar buttonLabel="팀 구성하기"/>
-                                    <div className={styles.block_row_wrapper} style={{height: "15px"}}>
-                                        <div className={styles.content_sub_title} style={{width: "40px"}}>
-                                            Name 
+                                <div className={styles.content_wrapper} style={{ textAlign: 'left', height: '315px' }}>
+                                    <h2 className={styles.content_title} style={{ paddingLeft: '15px' }}>부문 임직원</h2>
+                                    <EmployeeSearchBar buttonLabel="팀 구성하기" />
+                                    <div className={styles.block_row_wrapper} style={{ height: "15px" }}>
+                                        <div className={styles.content_sub_title} style={{ width: "60px" }}>
+                                            이름
                                         </div>
-                                        <div className={styles.content_sub_title} style={{width: "40px"}}>
-                                            Position
+                                        <div className={styles.content_sub_title} style={{ width: "40px" }}>
+                                            직책
                                         </div>
-                                        <div className={styles.content_sub_title} style={{width: "395px"}}>
-                                            Recent Project
-                                        </div>                                        
-                                        <div className={styles.content_sub_title} style={{width: "70px"}}>
-                                            Main Skill
+                                        <div className={styles.content_sub_title} style={{ width: "330px" }}>
+                                            최근 프로젝트
                                         </div>
-                                        <div className={styles.content_sub_title} style={{width: "70px"}}>
-                                            Elements 
+                                        <div className={styles.content_sub_title} style={{ width: "80px" }}>
+                                            총 객체 수
+                                        </div>
+                                        <div className={styles.content_sub_title} style={{ width: "90px" }}>
+                                            최근 작업 날짜
                                         </div>
                                     </div>
+                                    <div style={{ marginTop: "5px", height: "220px", overflowY: "auto", overflowX: "hidden" }}>
+                                        {departmentMembers.length != undefined ? departmentMembers.map((member, i) => {
+                                            return (
+                                                <div key={i} className={styles.list_wrapper} style={{ borderRadius: '10px', borderWidth: '1px', border: '1px solid #F1F1F1' }}>
+                                                    <div className={styles.block_row_wrapper} style={{ width: '700px' }}>
+                                                        <div className={styles.list_content} style={{ lineHeight: "37px", width: "65px" }}>{member.uname}</div>
+                                                        <div className={styles.list_content} style={{ lineHeight: "37px", width: "45px" }}>{member.tname}</div>
+                                                        <div className={styles.list_content} style={{ lineHeight: "37px", width: "340px" }}>{member.pname}</div>
+                                                        <div className={styles.list_content} style={{ lineHeight: "37px", width: "85px" }}>{member.total_transaction_count}</div>
+                                                        <div className={styles.list_content} style={{ lineHeight: "37px", width: "100px" }}>{Moment(member.max_date).format('YYYY-MM-DD')}</div>
+                                                    </div>
+                                                </div>
+                                            );
+                                        }) : <div className={styles.project_content} style={{ paddingTop: '80px' }} >기간 내에 참여하신 BIM 프로젝트가 존재하지 않습니다.</div>
+                                        }
+                                    </div>
                                 </div>
-                                <div className={styles.content_wrapper} style={{width: '350px', textAlign: 'left', height: '315px'}}>
-                                    <h2 className={styles.content_title} style={{paddingLeft: '15px'}}>Department Performance</h2>
+                                <div className={styles.content_wrapper} style={{ width: '335px', textAlign: 'left', height: '315px' }}>
+                                    <h2 className={styles.content_title} style={{ paddingLeft: '15px' }}>Department Performance</h2>
                                     {/* 여기에 레이더 차트 */}
-                                </div>                                
+                                </div>
                             </div>
                             <div className={styles.block_row_wrapper}>
-                                <div className={styles.content_wrapper} style={{textAlign: 'left', height: '315px'}}>
-                                    <h2 className={styles.content_title} style={{paddingLeft: '15px'}}>프로젝트</h2>
-                                    <ProjectSearchBar/>
-                                    <div className={styles.block_row_wrapper} style={{height: "15px"}}>
-                                        <div className={styles.content_sub_title} style={{width: "60px"}}>
-                                            Project Code 
+                                <div className={styles.content_wrapper} style={{ textAlign: 'left', height: '315px' }}>
+                                    <h2 className={styles.content_title} style={{ paddingLeft: '15px' }}>프로젝트</h2>
+                                    <ProjectSearchBar />
+                                    <div className={styles.block_row_wrapper} style={{ height: "15px" }}>
+                                        <div className={styles.content_sub_title} style={{ width: "60px" }}>
+                                            프로젝트 코드
                                         </div>
-                                        <div className={styles.content_sub_title} style={{width: "405px"}}>
-                                            Project Name
+                                        <div className={styles.content_sub_title} style={{ width: "390px" }}>
+                                            프로젝트명
                                         </div>
-                                        <div className={styles.content_sub_title} style={{width: "40px"}}>
+                                        <div className={styles.content_sub_title} style={{ width: "40px" }}>
                                             PM
                                         </div>
-                                        <div className={styles.content_sub_title} style={{width: "130px"}}>
-                                            Last Modified
+                                        <div className={styles.content_sub_title} style={{ width: "90px" }}>
+                                            최근 작업 날짜
                                         </div>
                                     </div>
-                                    {projects.data != undefined ? projects.data.map((project, i) => {
+                                    <div style={{ marginTop: "5px", height: "220px", overflowY: "auto", overflowX: "hidden" }}>
+                                        {projects.length != undefined ? projects.map((project, i) => {
                                             return (
-                                                <Tooltip key={i} title={project.project_name}>
-                                                    <div className={styles.project_content_wrapper} style={{borderRadius:'10px', borderWidth:'1px', border: selectedProject.project_code == project.project_code ? '1px solid #1974d2' : '1px solid #F1F1F1'}} onClick={(e) => OnProjectClick(e, project)}>
-                                                        <div className={styles.block_row_wrapper} style={{width: '650px'}}>
-                                                            <div className={styles.project_content} style={{lineHeight: "37px", width: "60px"}}>{project.project_code}</div>
-                                                            <div className={styles.project_content}  style={{lineHeight: "37px", width: "405px" }}>{project.project_name}</div>
-                                                            <div className={styles.project_content}  style={{lineHeight: "37px", width: "40px" }}>PM 이름</div>
-                                                            <div className={styles.project_content}  style={{lineHeight: "37px", width: "106px"}}>{Moment(project.occurred_on).format('YYYY-MM-DD HH:mm')}</div>
-                                                        </div>
+                                                <div key={i} className={styles.list_wrapper} style={{ borderRadius: '10px', borderWidth: '1px', border: '1px solid #F1F1F1' }}>
+                                                    <div className={styles.block_row_wrapper} style={{ width: '645px' }}>
+                                                        <div className={styles.list_content} style={{ lineHeight: "37px", width: "65px" }}>{project.proj_cd}</div>
+                                                        <div className={styles.list_content} style={{ lineHeight: "37px", width: "400px", textOverflow: "ellipsis"}}>{project.proj_nm}</div>
+                                                        <div className={styles.list_content} style={{ lineHeight: "37px", width: "45px" }}>{project.user_nm}</div>
+                                                        <div className={styles.list_content} style={{ lineHeight: "37px", width: "95px" }}>{Moment(project.start_dt).format('YYYY-MM-DD')}</div>
                                                     </div>
-                                                </Tooltip>
+                                                </div>
                                             );
-                                        }) : <div className={styles.project_content} style={{paddingTop: '80px'}} >기간 내에 참여하신 BIM 프로젝트가 존재하지 않습니다.</div>
-                                    }                                    
+                                        }) : <div className={styles.project_content} style={{ paddingTop: '80px' }} >기간 내에 참여하신 BIM 프로젝트가 존재하지 않습니다.</div>
+                                        }
+                                    </div>
                                 </div>
-                                <div className={styles.content_wrapper} style={{width: '350px', textAlign: 'left', height: '315px'}}>
-                                    <h2 className={styles.content_title} style={{paddingLeft: '15px'}}>BIM 작업량 추이</h2>
-                                    <div className="transaction-xy-chart" style={{top:"-10px", height:"290px"}}></div>
-                                </div>                                
+                                <div className={styles.content_wrapper} style={{ width: '350px', textAlign: 'left', height: '315px' }}>
+                                    <h2 className={styles.content_title} style={{ paddingLeft: '15px' }}>BIM 작업량 추이</h2>
+                                    <div className="transaction-xy-chart" style={{ top: "-10px", height: "290px" }}></div>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </section>
-        </main>
+        </main >
     )
 }
 export default Department;

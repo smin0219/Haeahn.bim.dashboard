@@ -70,7 +70,7 @@
     border-color:	#F1F1F1;
     margin: 2px 0 0 2px;
     text-align: center;
-    overflow-x: hidden;
+    overflow: hidden;
 }
 
 .content_title{
