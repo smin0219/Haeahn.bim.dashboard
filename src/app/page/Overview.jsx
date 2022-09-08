@@ -48,9 +48,6 @@ export default function Overview(){
                     <TabBar level={2} currentTab={currentTab} setCurrentTab={setCurrentTab}/>
                 </div>
                 <section className={pageStyles.page_container}>
-                    <div className={styles.block_column_wrapper}>
-                        <NavigationBar />
-                    </div>
                     {ShowPage(currentTab)}
                 </section>
             </div>

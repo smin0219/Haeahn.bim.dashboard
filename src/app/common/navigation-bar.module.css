@@ -28,5 +28,19 @@ li {
     border-radius: 50%;
     width: 40px;
     height: 40px;
-    margin-top:40px;  
+    margin-top:40px;
+}
+
+.back_button{
+    background-color: white;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    margin-top:10px;  
+    cursor: pointer
+}
+
+.block_column_wrapper{
+    display: flex;
+    flex-direction: column;
 }

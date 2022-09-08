@@ -7,7 +7,8 @@ import Data from '../data/Data';
 import Moment from 'moment';
 import infoImg from './img/INFO_ICON.png';
 import Chart from '../chart/Chart';
-import LoadingScreen from 'react-loading-screen'
+import NavigationBar from '../common/NavigationBar';
+
 
 export default function Employee (props) {
 
@@ -26,11 +27,12 @@ export default function Employee (props) {
     const [endDate, setEndDate] = useState(Moment().subtract(1, 'day').startOf('day').format('YYYY-MM-DD'));
     const [isUpdated, setIsUpdated] = useState(true);
     const [isDateUpdated, setIsDateUpdated] = useState(true);
+    const [isBackButtonVisible, setIsBackButtonVisible] = useState(props.isBackButtonVisible == undefined ? false : props.isBackButtonVisible);
 
-    const user = props.user;
+    const user = props.selectedUser == undefined ? props.user : props.selectedUser;
     const loginId = user.resultMail.substring(0, user.resultMail.indexOf('@'));
     const profileImg = "https://hub.haeahn.com/Storage/GW/ImageStorage/Employee/" + loginId + ".jpg";
-    const employeeId = '20000102';//user.resultMessage;
+    const employeeId = props.selectedUser == undefined ? '20000102' : user.resultMessage;
     const employeeName = user.resultUserName;
 
     const dailyTransactionXYChart = (chart, date, tooltipText, isAverage) => {
@@ -74,13 +76,6 @@ export default function Employee (props) {
         }
 
         return modelData;
-    }
-
-    const CreateGanttChartData = () => {
-        var modelData = [];
-        var annotationData = [];
-        var viewData = [];
-
     }
 
     const UpdateCharts = (projectCode) => {
@@ -137,7 +132,7 @@ export default function Employee (props) {
         if(isUpdated){
             if(isDateUpdated){
                 Data.GetEmployeeProjects(employeeId, startDate, endDate).then(response => {
-                    var projects = response.data;
+                    var projects = props.selectedUser == undefined ? response.data : [(response.data).find((projects) => projects.project_code == '21118')];
                     var defaultProject = projects[0];
 
                     if(projects.length > 0){
@@ -163,119 +158,123 @@ export default function Employee (props) {
                     setTotalTransactionCount(response.data[0].total_transaction_count);
                 });
                 UpdateCharts(selectedProject.project_code);
-                isUpdated(false);
+                setIsUpdated(false);
             }
         }
     }, [selectedProject, startDate, endDate]);
 
     return (
-        
-        <main className={pageStyles.page_wrapper}>
-            <section className={pageStyles.page_container} style={{borderTopLeftRadius: "0px", borderBottomLeftRadius: "0px"}}>
-                <div className={styles.block_column_wrapper}  style={{backgroundColor: "white"}}>
-                    {/* 헤더 */}
-                    <div className={styles.block_row_wrapper} style={{height: '100px'}}>
-                        <div className={styles.title_label}  style={{ width: '350px' }}>Personal Performance Overview</div>
-                        <Tooltip title="전일 12시 10분 이전 데이터만 표시 됩니다.">
-                            <img className={styles.info_img} src={infoImg} alt="info"/>
-                        </Tooltip>
-                        <MuiDatePicker date={startDate} setDate={setStartDate}  style={{width: '100px'}} setIsUpdated={setIsUpdated} setIsDateUpdated={setIsDateUpdated}/>
-                        <div style={{height: '10px', paddingTop: '42px', paddingLeft: '20px', paddingRight: '20px'}}>~</div>
-                        <MuiDatePicker date={endDate} setDate={setEndDate} setIsUpdated={setIsUpdated} setIsDateUpdated={setIsDateUpdated}/>
-                        <div className={styles.block_column_wrapper} style={{width: '240px', paddingLeft: '80px'}}>
-                            <img className={styles.profile_img} src={profileImg} alt="profile"/>
-                            <div className={styles.profile_label}>환영합니다, {employeeName} 님</div>
-                        </div> 
-                    </div>
+        <section className={pageStyles.page_container}>
+            <div className={styles.block_column_wrapper}>
+                <NavigationBar user={props.user} selectedProject={props.selectedProject} isBackButtonVisible={isBackButtonVisible}/>
+            </div>
+            <main className={pageStyles.page_wrapper}>
+                <section className={pageStyles.page_container} style={{borderTopLeftRadius: "0px", borderBottomLeftRadius: "0px"}}>
+                    <div className={styles.block_column_wrapper}  style={{backgroundColor: "white"}}>
+                        {/* 헤더 */}
+                        <div className={styles.block_row_wrapper} style={{height: '100px'}}>
+                            <div className={styles.title_label}  style={{ width: '350px' }}>{props.selectedUser == undefined ? 'Personal' : employeeName + "'s "} Performance Overview</div>
+                            <Tooltip title="전일 12시 10분 이전 데이터만 표시 됩니다.">
+                                <img className={styles.info_img} src={infoImg} alt="info"/>
+                            </Tooltip>
+                            <MuiDatePicker date={startDate} setDate={setStartDate}  style={{width: '100px'}} setIsUpdated={setIsUpdated} setIsDateUpdated={setIsDateUpdated}/>
+                            <div style={{height: '10px', paddingTop: '42px', paddingLeft: '20px', paddingRight: '20px'}}>~</div>
+                            <MuiDatePicker date={endDate} setDate={setEndDate} setIsUpdated={setIsUpdated} setIsDateUpdated={setIsDateUpdated}/>
+                            <div className={styles.block_column_wrapper} style={{width: '240px', paddingLeft: '100px'}}>
+                                <img className={styles.profile_img} src={profileImg} alt="profile"/>
+                                
+                                <div className={styles.profile_label}>{props.selectedUser == undefined ? "환영합니다, " + employeeName + " 님" : employeeName + " 님 작업 데이터"}</div>
+                            </div> 
+                        </div>
 
-                    {/* 헤더 */}
-                    <div className={styles.block_row_wrapper}>
-                        {/* 좌측 주 컨텐츠  */}
-                        <div className={styles.block_column_wrapper}>
-                            {/* 오버뷰 정보창 */}
-                            <div className={styles.block_row_wrapper} style={{marginLeft: '5px'}}>
-                                <div className={styles.block_column_wrapper}>
-                                    <div className={styles.block_row_wrapper}>
-                                        <div className={styles.content_wrapper} style={{width: '90px'}}>
-                                            <div className={styles.stats_value}>{projects.length != undefined ? projects.length : 0}</div>
-                                            <div className={styles.stats_title}>총 프로젝트 수</div>
-                                        </div>
-                                        <Tooltip title={totalTransactionCount}>
+                        {/* 헤더 */}
+                        <div className={styles.block_row_wrapper}>
+                            {/* 좌측 주 컨텐츠  */}
+                            <div className={styles.block_column_wrapper}>
+                                {/* 오버뷰 정보창 */}
+                                <div className={styles.block_row_wrapper} style={{marginLeft: '5px'}}>
+                                    <div className={styles.block_column_wrapper}>
+                                        <div className={styles.block_row_wrapper}>
                                             <div className={styles.content_wrapper} style={{width: '90px'}}>
-                                                <div className={styles.stats_value}>{totalTransactionCount}</div>
-                                                <div className={styles.stats_title}>작업한 객체 수</div>
+                                                <div className={styles.stats_value}>{projects.length != undefined ? projects.length : 0}</div>
+                                                <div className={styles.stats_title}>총 프로젝트 수</div>
                                             </div>
-                                        </Tooltip>
-                                        <Tooltip title={mostWorkedModel}>
-                                            <div className={styles.content_wrapper} style={{width: '226px'}}>
-                                                <div className={styles.stats_value} >{mostWorkedModel}</div>
-                                                <div className={styles.stats_title}>가장 많이 작업한 모델 카테고리</div>
-                                            </div>
-                                        </Tooltip>
-                                        <Tooltip title={mostWorkedAnnotation}>
-                                            <div className={styles.content_wrapper} style={{width: '226px'}}>
-                                                <div className={styles.stats_value}>{mostWorkedAnnotation}</div>
-                                                <div className={styles.stats_title}>가장 많이 작업한 도면 카테고리</div>
-                                            </div>
-                                        </Tooltip>
+                                            <Tooltip title={totalTransactionCount}>
+                                                <div className={styles.content_wrapper} style={{width: '90px'}}>
+                                                    <div className={styles.stats_value}>{totalTransactionCount}</div>
+                                                    <div className={styles.stats_title}>작업한 객체 수</div>
+                                                </div>
+                                            </Tooltip>
+                                            <Tooltip title={mostWorkedModel}>
+                                                <div className={styles.content_wrapper} style={{width: '226px'}}>
+                                                    <div className={styles.stats_value} >{mostWorkedModel}</div>
+                                                    <div className={styles.stats_title}>가장 많이 작업한 모델 카테고리</div>
+                                                </div>
+                                            </Tooltip>
+                                            <Tooltip title={mostWorkedAnnotation}>
+                                                <div className={styles.content_wrapper} style={{width: '226px'}}>
+                                                    <div className={styles.stats_value}>{mostWorkedAnnotation}</div>
+                                                    <div className={styles.stats_title}>가장 많이 작업한 도면 카테고리</div>
+                                                </div>
+                                            </Tooltip>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                            {/* 오버뷰 정보창 */}
-                            <div className={styles.block_column_wrapper} style={{width: '656px', marginLeft: '5px'}}>
-                                {/* 프로젝트 리스트 */}
-                                <div className={styles.content_wrapper} style={{textAlign: 'left', height: '250px'}}>
-                                    <h2 className={styles.content_title} style={{paddingLeft: '15px'}}>프로젝트</h2>
-                                    <div className={styles.block_row_wrapper} style={{height: "15px"}}>
-                                        <div className={styles.content_sub_title} style={{width: "80px"}}>
-                                            Project Code 
+                                {/* 오버뷰 정보창 */}
+                                <div className={styles.block_column_wrapper} style={{width: '656px', marginLeft: '5px'}}>
+                                    {/* 프로젝트 리스트 */}
+                                    <div className={styles.content_wrapper} style={{textAlign: 'left', height: '250px'}}>
+                                        <h2 className={styles.content_title} style={{paddingLeft: '15px'}}>프로젝트</h2>
+                                        <div className={styles.block_row_wrapper} style={{height: "15px"}}>
+                                            <div className={styles.content_sub_title} style={{width: "80px"}}>
+                                                Project Code 
+                                            </div>
+                                            <div className={styles.content_sub_title} style={{width: "400px"}}>
+                                                Project Name
+                                            </div>
+                                            <div className={styles.content_sub_title} style={{width: "120px"}}>
+                                                Last Modified Date
+                                            </div>
                                         </div>
-                                        <div className={styles.content_sub_title} style={{width: "400px"}}>
-                                            Project Name
-                                        </div>
-                                        <div className={styles.content_sub_title} style={{width: "120px"}}>
-                                            Last Modified Date
-                                        </div>
-                                    </div>
-                                    {projects.length != undefined ? projects.map((project, i) => {
-                                            return (
-                                                <Tooltip key={i} title={project.project_name}>
-                                                    <div className={styles.list_wrapper} style={{borderRadius:'10px', borderWidth:'1px', border: selectedProject.project_code == project.project_code ? '1px solid #1974d2' : '1px solid #F1F1F1'}} onClick={(e) => OnProjectClick(e, project)}>
-                                                        <div className={styles.block_row_wrapper} style={{width: '650px'}}>
-                                                            <div className={styles.list_content} style={{lineHeight: "37px", width: "80px"}}>{project.project_code}</div>
-                                                            <div className={styles.list_content}  style={{lineHeight: "37px", width: "400px"}}>{project.project_name}</div>
-                                                            <div className={styles.list_content}  style={{lineHeight: "37px", width: "120px"}}>{Moment(project.occurred_on).format('YYYY-MM-DD')}</div>
+                                        {projects.length != undefined ? projects.map((project, i) => {
+                                                return (
+                                                    <Tooltip key={i} title={project.project_name}>
+                                                        <div className={styles.list_wrapper} style={{borderRadius:'10px', borderWidth:'1px', border: selectedProject.project_code == project.project_code ? '1px solid #1974d2' : '1px solid #F1F1F1'}} onClick={(e) => OnProjectClick(e, project)}>
+                                                            <div className={styles.block_row_wrapper} style={{width: '650px'}}>
+                                                                <div className={styles.list_content} style={{lineHeight: "37px", width: "80px"}}>{project.project_code}</div>
+                                                                <div className={styles.list_content}  style={{lineHeight: "37px", width: "400px"}}>{project.project_name}</div>
+                                                                <div className={styles.list_content}  style={{lineHeight: "37px", width: "120px"}}>{Moment(project.occurred_on).format('YYYY-MM-DD')}</div>
+                                                            </div>
                                                         </div>
-                                                    </div>
-                                                </Tooltip>
-                                            );
-                                        }) : <div className={styles.project_content} style={{paddingTop: '80px'}} >기간 내에 참여하신 BIM 프로젝트가 존재하지 않습니다.</div>
-                                    }
+                                                    </Tooltip>
+                                                );
+                                            }) : <div className={styles.project_content} style={{paddingTop: '80px'}} >기간 내에 참여하신 BIM 프로젝트가 존재하지 않습니다.</div>
+                                        }
+                                    </div>
+                                    {/* 프로젝트 리스트 */}
+                                    {/* 일일작업량 차트 */}
+                                    <div className={styles.content_wrapper} style={{paddingLeft: '15px', textAlign: 'left', height: '378px', overflow: 'hidden'}}>
+                                        <h2 className={styles.content_title}>일일 작업량</h2>
+                                        <div className="transaction-xy-chart" style={{top:"-10px", height:"340px"}}></div>
+                                    </div>
+                                    {/* 일일작업량 차트 */}
                                 </div>
-                                {/* 프로젝트 리스트 */}
-                                {/* 일일작업량 차트 */}
-                                <div className={styles.content_wrapper} style={{paddingLeft: '15px', textAlign: 'left', height: '378px', overflow: 'hidden'}}>
-                                    <h2 className={styles.content_title}>일일 작업량</h2>
-                                    <div className="transaction-xy-chart" style={{top:"-10px", height:"340px"}}></div>
+                            </div>
+                            {/* 좌측 주 컨텐츠  */}
+                            {/* 우측 주 컨텐츠 */}
+                            <div className={styles.block_column_wrapper}>
+                                <div className={styles.content_wrapper} style={{width: '430px', textAlign: 'left', height: '690px'}}>
+                                    <h2 className={styles.content_title} style={{paddingLeft: '15px'}}>통계</h2>
+                                    <div className="model-pie-chart" style={{height:"213px", width:'100%', borderWidth:'1px', borderBottom: '1px solid #F1F1F1'}}></div>
+                                    <div className="annotation-pie-chart" style={{height:"213px", width:'100%', borderWidth:'1px', borderBottom: '1px solid #F1F1F1'}}></div>
+                                    <div className="view-pie-chart" style={{height:"213px" , width:'100%'}}></div>
                                 </div>
-                                {/* 일일작업량 차트 */}
                             </div>
+                            {/* 우측 주 컨텐츠 */}
                         </div>
-                        {/* 좌측 주 컨텐츠  */}
-                        {/* 우측 주 컨텐츠 */}
-                        <div className={styles.block_column_wrapper}>
-                            <div className={styles.content_wrapper} style={{width: '430px', textAlign: 'left', height: '690px'}}>
-                                <h2 className={styles.content_title} style={{paddingLeft: '15px'}}>통계</h2>
-                                <div className="model-pie-chart" style={{height:"213px", width:'100%', borderWidth:'1px', borderBottom: '1px solid #F1F1F1'}}></div>
-                                <div className="annotation-pie-chart" style={{height:"213px", width:'100%', borderWidth:'1px', borderBottom: '1px solid #F1F1F1'}}></div>
-                                <div className="view-pie-chart" style={{height:"213px" , width:'100%'}}></div>
-                            </div>
-                        </div>
-                        {/* 우측 주 컨텐츠 */}
                     </div>
-                </div>
-            </section>
-        </main>
-        
+                </section>
+            </main>
+        </section>
     )
 }
