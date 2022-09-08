@@ -76,6 +76,13 @@ export default function Employee (props) {
         return modelData;
     }
 
+    const CreateGanttChartData = () => {
+        var modelData = [];
+        var annotationData = [];
+        var viewData = [];
+
+    }
+
     const UpdateCharts = (projectCode) => {
         Data.GetTransactionStatsByDate(employeeId, projectCode, startDate, endDate).then(response => {
 

@@ -102,4 +102,47 @@ function PieSeries(chart){
     return series;
 } 
 
-export default {XYChart, PieChart, PieSeries, XYSeries, SeriesData}
+function GanttChart(div, data, startDate, endDate) {
+    am4core.useTheme(am4themes_animated);
+    var chart = am4core.create(div, am4charts.XYChart);
+    chart.hiddenState.properties.opacity = 0;
+    chart.paddingRight = 30;
+    chart.dateFormatter.inputDateFormat = "yyyy-MM-dd";
+    chart.scrollbarX = new am4core.Scrollbar();
+    chart.data = data;
+
+    var colorSet = new am4core.ColorSet();
+    colorSet.saturation = 0.4;
+
+    var categoryAxis = chart.yAxes.push(new am4charts.CategoryAxis());
+    categoryAxis.dataFields.category = "parentCategory";
+    categoryAxis.renderer.grid.template.location = 0;
+    categoryAxis.renderer.inversed = true;
+
+    var dateAxis = chart.xAxes.push(new am4charts.DateAxis());
+    dateAxis.dateFormats.setKey("day", "MM/dd");
+    dateAxis.renderer.minGridDistance = 30;
+    dateAxis.baseInterval = { count: 1, timeUnit: "day" };
+    dateAxis.max = new Date(endDate).getTime();
+    dateAxis.min = new Date(startDate).getTime();
+    dateAxis.strictMinMax = true;
+    dateAxis.renderer.tooltipLocation = 0;
+
+    return chart;
+}
+
+function GanttSeries(chart){
+    var series = chart.series.push(new am4charts.ColumnSeries());
+    series.columns.template.width = am4core.percent(80);
+    //series.columns.template.tooltipText = "{categoryName}";
+    
+    //series.dataFields.valueX = "categoryName";
+    series.dataFields.openDateX = "fromDate";
+    series.dataFields.dateX = "toDate";        
+    series.dataFields.categoryY = "parentCategory";
+    series.columns.template.propertyFields.fill = "color"; // get color from data
+    series.columns.template.propertyFields.stroke = "color";
+    series.columns.template.strokeOpacity = 1;
+}
+
+export default {XYChart, PieChart, PieSeries, XYSeries, SeriesData, GanttChart, GanttSeries}

@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-
 import styles from './css/overview.module.css';
 import pageStyles from './css/page.module.css';
 import NavigationBar from '../common/NavigationBar';
@@ -7,13 +6,15 @@ import EmployeeSearchBar from '../common/EmployeeSearchBar';
 import ProjectSearchBar from '../common/ProjectSearchBar';
 import MuiDatePicker from '../common/MuiDatePicker';
 import ProjectComboBox from '../common/ProjectComboBox';
-
 import Tooltip from '@mui/material/Tooltip';
 import Moment from 'moment';
 import { Audio } from 'react-loader-spinner'
 import Data from '../data/Data';
 import infoImg from './img/INFO_ICON.png';
-import GanttChart from '../chart/GanttChart';
+import { ColorSet } from '@amcharts/amcharts4/core';
+import Chart from '../chart/Chart';
+import chartStyles from '../chart/chart.css';
+import { flatten } from '@amcharts/amcharts4/.internal/core/utils/Iterator';
 
 function Team(props) {
 
@@ -25,10 +26,6 @@ function Team(props) {
     const [isDateUpdated, setIsDateUpdated] = useState(true);
     const [teamMembers, setTeamMembers] = useState(true);
 
-    const OnProjectClick = (event, props) => {
-        setSelectedProject(true);
-    }
-
     const OnMemberClick = (event, props) => {
         console.log(event)
     }
@@ -38,23 +35,85 @@ function Team(props) {
     const employeeName = user.resultUserName;
     const loginId = user.resultMail.substring(0, user.resultMail.indexOf('@'));
     const profileImg = "https://hub.haeahn.com/Storage/GW/ImageStorage/Employee/" + loginId + ".jpg";
+    
 
-    GanttChart(startDate, endDate);
+    
+    const CreateGanttChartData = (data, colors, parentCategory) => {
+        var ganttData = [];
+        if (parentCategory == "Model") {
+            for (let i = 0; i < data.length; i++) {
+                ganttData.push({
+                    parentCategory: parentCategory,
+                    //categoryName: data[i].category_name,
+                    fromDate: Moment(data[i].occurred_on).format('YYYY-MM-DD'),
+                    toDate: Moment(data[i].occurred_on).add(1, 'days').format('YYYY-MM-DD'),
+                    color: colors[0]
+                    //color: ColorSet.getIndex(0).brighten(0)
+                })
+            }
+        }
+        if (parentCategory == "Annotation") {
+            for (let i = 0; i < data.length; i++) {
+                ganttData.push({
+                    parentCategory: parentCategory,
+                    //categoryName: data[i].category_name,
+                    fromDate: Moment(data[i].occurred_on).format('YYYY-MM-DD'),
+                    toDate: Moment(data[i].occurred_on).add(1, 'days').format('YYYY-MM-DD'),
+                    color: colors[1]
+                    //color: ColorSet.getIndex(0).brighten(0)
+                })
+            }
+        }
+        else {
+
+        }
+        //console.log(ganttData);
+        return ganttData;
+        
+    }
+
+    const UpdateCharts = (projectCode) => {
+        let ganttChartData = []
+        let ganttChartModelData = []
+        let ganttChartAnnotationData = []
+        let flattenData = []
+        let colors = ["#fec8cd", "#d291bc", "#e0bbe4", "#957dad", "#ffdfd3"]
+
+        Data.GetModelLogByTeam(projectCode, startDate, endDate).then(response => {
+            let data = response.data
+            ganttChartModelData = CreateGanttChartData(data, colors, "Model")
+            ganttChartData.push(ganttChartModelData)
+        })
+
+        Data.GetAnnotationLogByTeam(projectCode, startDate, endDate).then(response => {
+            let data = response.data
+            ganttChartAnnotationData = CreateGanttChartData(data, colors, "Annotation")
+            ganttChartData.push(ganttChartAnnotationData)
+            flattenData = ganttChartData.flat(Infinity)
+
+            let ganttChart = Chart.GanttChart("gantt-chart", flattenData, startDate, endDate)
+            Chart.GanttSeries(ganttChart)
+        })        
+    }
 
     useEffect(() => {
-
         if(isUpdated){
-            if(isDateUpdated){
+            if(isDateUpdated){ //날짜가 업데이트 되면
                 Data.GetTeamProjects(employeeId).then(response => {
                     var projects = response.data;
-                    var defaultProject = projects[0];
-    
-                    if (projects.length > 0) {
+                    var defaultProject = projects[0];                 
+                    if (projects.length > 0) {                      
                         setProjects(projects);
                         setSelectedProject(defaultProject.PROJ_CD);
-                        Data.GetTeamMembers(defaultProject.PROJ_CD).then(response => {
-                            setTeamMembers(response.data);
-                        });   
+
+                        Data.GetTeamMembers(defaultProject.PROJ_CD)
+                        .then(response => {
+                            setTeamMembers(response.data);             
+                        })
+                        .catch(error => {
+                            setTeamMembers(false);
+                        });
+                        UpdateCharts(defaultProject.PROJ_CD);   
                     }
                     else {
                         setProjects({});
@@ -64,16 +123,21 @@ function Team(props) {
                     setIsDateUpdated(false);
                 });
             }
-            else{
-                setIsUpdated(false);
+            else{ //날짜가 업데이트 되지 않으면        
                 if (projects.length > 0) {
-                    Data.GetTeamMembers(selectedProject).then(response => {
+                    Data.GetTeamMembers(selectedProject.PROJ_CD)
+                    .then(response => {
                         setTeamMembers(response.data);
-                    });   
+                    })
+                    .catch(error => {
+                        setTeamMembers(false);
+                    });
+                    UpdateCharts(selectedProject.PROJ_CD);   
                 }
+                setIsUpdated(false);
             }
         }
-    }, [selectedProject]);
+    }, [selectedProject, startDate, endDate]);
 
     return (
         <main className={pageStyles.page_wrapper}>
@@ -84,9 +148,9 @@ function Team(props) {
                         <Tooltip title="전일 12시 10분 이전 데이터만 표시 됩니다.">
                             <img className={styles.info_img} src={infoImg} alt="info" />
                         </Tooltip>
-                        <MuiDatePicker date={startDate} setDate={setStartDate} setIsDateUpdated={setIsDateUpdated} />
+                        <MuiDatePicker date={startDate} setDate={setStartDate} setIsUpdated={setIsUpdated} setIsDateUpdated={setIsDateUpdated} />
                         <div style={{ height: '10px', paddingTop: '42px', paddingLeft: '20px', paddingRight: '20px' }}>~</div>
-                        <MuiDatePicker date={endDate} setDate={setEndDate} setIsDateUpdated={setIsDateUpdated} />
+                        <MuiDatePicker date={endDate} setDate={setEndDate} setIsUpdated={setIsUpdated} setIsDateUpdated={setIsDateUpdated} />
                         <div className={styles.block_column_wrapper} style={{ width: '220px', marginLeft: '80px' }}>
                             <img className={styles.profile_img} src={profileImg} alt="profile" />
                             <div className={styles.profile_label}>환영합니다, {employeeName} 님</div>
@@ -157,14 +221,15 @@ function Team(props) {
                                                         </div>
                                                     </div>
                                                 );
-                                            }) : <div className={styles.project_content} style={{paddingTop: '80px'}} >기간 내에 참여하신 BIM 프로젝트가 존재하지 않습니다.</div>
+                                            }) : <div className={styles.nodata_label} >기간 내에 발생한 BIM 작업이 없습니다.</div>
                                         }
                                     </div>
                                    
                                 </div>
                             </div>
                             <div className={styles.content_wrapper} style={{ textAlign: 'left', height: '240px', margin: '2px 4px 0 2px' }}>
-                                <div className="gantt-chart" />
+                                {teamMembers.length != undefined ? <div className="gantt-chart" /> : <div className={styles.nodata_label} style={{padding: "120px 0px 0px 400px"}} >기간 내에 발생한 BIM 작업이 없습니다.</div>}
+                                
                             </div>
                         </div>
                     </div>

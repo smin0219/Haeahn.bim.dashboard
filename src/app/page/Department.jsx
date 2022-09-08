@@ -10,7 +10,6 @@ import Tooltip from '@mui/material/Tooltip';
 import Moment from 'moment';
 import Data from '../data/Data';
 import { MuiThemeProvider } from '@material-ui/core';
-import moment from 'moment';
 
 function Department(props) {
 
@@ -115,10 +114,10 @@ function Department(props) {
                                     <div style={{ marginTop: "5px", height: "220px", overflowY: "auto", overflowX: "hidden" }}>
                                         {projects.length != undefined ? projects.map((project, i) => {
                                             return (
-                                                <div key={i} className={styles.list_wrapper} style={{ borderRadius: '10px', borderWidth: '1px', border: '1px solid #F1F1F1' }}>
+                                                <div key={i} className={styles.list_wrapper} style={{ borderRadius: '10px', borderWidth: '1px', border: '1px solid #F1F1F1', overflow: "hidden" }}>
                                                     <div className={styles.block_row_wrapper} style={{ width: '645px' }}>
                                                         <div className={styles.list_content} style={{ lineHeight: "37px", width: "65px" }}>{project.proj_cd}</div>
-                                                        <div className={styles.list_content} style={{ lineHeight: "37px", width: "400px", textOverflow: "ellipsis"}}>{project.proj_nm}</div>
+                                                        <div className={styles.list_content} style={{ lineHeight: "37px", width: "400px", textOverflow: "ellipsis", overflowY: "hidden"}}>{project.proj_nm}</div>
                                                         <div className={styles.list_content} style={{ lineHeight: "37px", width: "45px" }}>{project.user_nm}</div>
                                                         <div className={styles.list_content} style={{ lineHeight: "37px", width: "95px" }}>{Moment(project.start_dt).format('YYYY-MM-DD')}</div>
                                                     </div>

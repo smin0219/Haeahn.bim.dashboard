@@ -118,6 +118,17 @@
     font-family: Pretendard, -apple-system, BlinkMacSystemFont, system-ui, Roboto, 'Helvetica Neue', 'Segoe UI', 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', sans-serif;
     text-align: center;
     padding: 0px 10px 0px 7px;
-    text-overflow:ellipsis;
-    overflow:hidden;
+    text-overflow: ellipsis;
+    overflow: hidden;
+}
+
+.nodata_label {
+    position: flex;
+    float: left;
+    color: rgb(107, 107, 107);
+    font-size: 14px;
+    font-weight: 400;
+    font-family: Pretendard, -apple-system, BlinkMacSystemFont, system-ui, Roboto, 'Helvetica Neue', 'Segoe UI', 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', sans-serif;
+    overflow: hidden;
+    padding: 150px 0px 0px 130px;
 }
