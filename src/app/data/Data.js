@@ -157,6 +157,30 @@ const GetTotalTransactionCount = (employeeId, projectCode, startDate, endDate) =
     }
 }
 
+const GetTotalModelCountByTeam = (projectCode, startDate, endDate) => {
+    try{
+        return axios.get(baseUri + '/totalModelCountByTeam', { 
+            params: {projectCode: projectCode, startDate:startDate, endDate:endDate}
+        });
+    }
+    catch(error){
+        console.error(error);
+    }
+}
+
+const GetTotalAnnotationCountByTeam = (projectCode, startDate, endDate) => {
+    try{
+        return axios.get(baseUri + '/totalAnnotationCountByTeam', { 
+            params: {projectCode: projectCode, startDate:startDate, endDate:endDate}
+        });
+    }
+    catch(error){
+        console.error(error);
+    }
+}
+
+
+
 // const GetParticipantsCountByDate = (projectCode, startDate, endDate) => { 
 //     try{
 //         return axios.get(baseUri + '/participantCountByDate', { 
@@ -181,4 +205,4 @@ const LoginUser = (userId, pw, authKey) => {
     }
   }
 
-export default {GetEmployeeProjects, GetTeamProjects, GetDepartmentProjects, GetTeamMembers, GetDepartmentMembers, GetModelByCount, GetModelLogByTeam, GetAnnotationLogByTeam, GetAnnotationByCount, GetViewCountByType, GetTransactionStatsByDate, GetTotalTransactionCount, GetAuthorityCode, LoginUser}
+export default {GetEmployeeProjects, GetTeamProjects, GetDepartmentProjects, GetTeamMembers, GetDepartmentMembers, GetModelByCount, GetModelLogByTeam, GetAnnotationLogByTeam, GetAnnotationByCount, GetViewCountByType, GetTransactionStatsByDate, GetTotalTransactionCount, GetTotalModelCountByTeam, GetTotalAnnotationCountByTeam, GetAuthorityCode, LoginUser}

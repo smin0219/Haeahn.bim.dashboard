@@ -45,7 +45,7 @@ export default function ProjectComboBox(props) {
         })
 
         return (
-            <div className={styles.title_label} style={{position:"absolute", width: 600}}>
+            <div className={styles.title_label} style={{position:"absolute", width: 630}}>
                 <Select 
                     placeholder={"Click here to select or search project"}
                     styles={customStyles}

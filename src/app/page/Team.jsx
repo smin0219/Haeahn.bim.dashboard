@@ -64,11 +64,9 @@ function Team(props) {
             for (let i = 0; i < data.length; i++) {
                 ganttData.push({
                     parentCategory: parentCategory,
-                    //categoryName: data[i].category_name,
                     fromDate: Moment(data[i].occurred_on).format('YYYY-MM-DD'),
                     toDate: Moment(data[i].occurred_on).add(1, 'days').format('YYYY-MM-DD'),
                     color: colors[0]
-                    //color: ColorSet.getIndex(0).brighten(0)
                 })
             }
         }
@@ -76,22 +74,50 @@ function Team(props) {
             for (let i = 0; i < data.length; i++) {
                 ganttData.push({
                     parentCategory: parentCategory,
-                    //categoryName: data[i].category_name,
                     fromDate: Moment(data[i].occurred_on).format('YYYY-MM-DD'),
                     toDate: Moment(data[i].occurred_on).add(1, 'days').format('YYYY-MM-DD'),
                     color: colors[1]
-                    //color: ColorSet.getIndex(0).brighten(0)
                 })
             }
         }
         return ganttData;
     }
 
+    const CreateSemiPieData = (data, parentCategory) => {
+        var semiPieData = [];
+        if (parentCategory == "Model"){
+            semiPieData.push({
+                category: "Model",
+                value: data[0].total_model_count
+            })
+        }
+        if (parentCategory == "Annotation"){
+            semiPieData.push({
+                category: "Annotation",
+                value: data[0].total_annotation_count
+            })
+        }
+        
+        return semiPieData;
+    }
+
+    const SemiPieDatatest = [
+        {
+            category: "Model",
+            value: 401
+        },
+        {
+            category: "Annotation",
+            value: 300
+        }
+    ]
+
     const dailyTransactionXYChart = (chart, date, tooltipText, isAverage) => {
         let employeeSeriesData = Chart.SeriesData(date, isAverage);
         let employeeXySeries = Chart.XYSeries(chart, employeeSeriesData, isAverage)
         employeeXySeries.tooltipText = tooltipText + ":{value}"
     }
+ 
 
     const UpdateCharts = (projectCode) => {
 
@@ -100,6 +126,11 @@ function Team(props) {
         let ganttChartAnnotationData = []
         let flattenData = []
         let colors = ["#fec8cd", "#d291bc", "#e0bbe4", "#957dad", "#ffdfd3"]
+
+        let semiPieData = []
+        let semiPieModelData = []
+        let semiPieAnnotationData = []
+        let flattenData1 = [] 
 
         Data.GetModelLogByTeam(projectCode, startDate, endDate).then(response => {
             let data = response.data
@@ -131,7 +162,26 @@ function Team(props) {
             let chart = Chart.XYChart("transaction-xy-chart");
             dailyTransactionXYChart(chart, teamTransactionCount, "팀 전체 객체 수", false);
             dailyTransactionXYChart(chart, averageTransactionCount, "팀 평균 객체 수", true);
+
+            
         });
+
+        Data.GetTotalModelCountByTeam(projectCode, startDate, endDate).then(response => {
+            let data = response.data
+            semiPieModelData = CreateSemiPieData(data, "Model")
+            semiPieData.push(semiPieModelData)
+        })
+
+        Data.GetTotalAnnotationCountByTeam(projectCode, startDate, endDate).then(response => {
+            let data = response.data
+            semiPieAnnotationData = CreateSemiPieData(data, "Annotation")
+            semiPieData.push(semiPieAnnotationData)
+            flattenData1 = semiPieData.flat(Infinity)
+
+            let semiPieChart = Chart.SemiPieChart("semi-pie-chart", flattenData1);
+            Chart.SemiPieSeries(semiPieChart);
+        })
+
     }
 
     useEffect(() => {
@@ -202,8 +252,9 @@ function Team(props) {
                                                 </div>
                                             </div>
                                             <div className={styles.block_row_wrapper}>
-                                                <div className={styles.content_wrapper} style={{ width: '200px', textAlign: 'left', height: '315px' }}>
-                                                    <h2 className={styles.content_title} style={{ paddingLeft: '15px' }}>Team Performance</h2>
+                                                <div className={styles.content_wrapper} style={{ width: '230px', textAlign: 'left', height: '315px' }}>
+                                                    <h2 className={styles.content_title} style={{ paddingLeft: '15px' }}>BIM 작업량</h2>
+                                                    <div className="semi-pie-chart"></div>
                                                 </div>
                                                 <div className={styles.content_wrapper} style={{ width: '400px', textAlign: 'left', height: '315px' }}>
                                                     <h2 className={styles.content_title} style={{ paddingLeft: '15px' }}>BIM 작업량 추이</h2>
@@ -214,7 +265,7 @@ function Team(props) {
                                         <div className={styles.content_wrapper} style={{ textAlign: 'left', height: '411px' }}>
                                             <h2 className={styles.content_title} style={{ paddingLeft: '15px' }}>팀원</h2>
                                             <div className={styles.block_row_wrapper} style={{ height: "15px"}}>
-                                                <div className={styles.content_sub_title} style={{ width: "55px" }}>
+                                                <div className={styles.content_sub_title} style={{ width: "35px" }}>
                                                     구분
                                                 </div>
                                                 <div className={styles.content_sub_title} style={{ width: "55px" }}>
@@ -234,8 +285,8 @@ function Team(props) {
                                                 {teamMembers.length != undefined ? teamMembers.map((member, i) => {
                                                         return (
                                                             <div key={i} className={styles.list_wrapper} style={{borderRadius:'10px', borderWidth:'1px', border: '1px solid #F1F1F1', cursor: "pointer"}} onClick={(e) => OnMemberSelect(e, member)}>
-                                                                <div className={styles.block_row_wrapper} style={{width: '450px'}}>
-                                                                    <div className={styles.list_content} style={{lineHeight: "37px", width: "80px"}}>{i+1}</div>
+                                                                <div className={styles.block_row_wrapper} style={{width: '430px'}}>
+                                                                    <div className={styles.list_content} style={{lineHeight: "37px", width: "60px"}}>{i+1}</div>
                                                                     <div className={styles.list_content} style={{lineHeight: "37px", width: "80px"}}>{member.USER_NM}</div>
                                                                     <div className={styles.list_content} style={{lineHeight: "37px", width: "80px"}}>{member.TITLE_NM}</div>
                                                                     <div className={styles.list_content}  style={{lineHeight: "37px", width: "150px"}}>{member.DEPT_NM}</div>
